@@ -6,7 +6,9 @@ public class IndividuumManager {
 	private Individuum[] inds;
 	private Vector<Individuum> indsRang;
 	private int bits;
-
+	private int min;
+	private int max;
+	
 	public IndividuumManager(int countOfInds, int bits) {
 		this.inds = new Individuum[countOfInds];
 		this.indsRang = new Vector<Individuum>();
@@ -14,6 +16,9 @@ public class IndividuumManager {
 	}
 
 	public void fillWithRandomNumbers(int min, int max) {
+		this.min = min;
+		this.max = max;
+		
 		for (int i = 0; i < inds.length; i++) {
 			inds[i] = new Individuum(i, getRandomInt(min, max), getRandomInt(min, max), bits);
 		}
@@ -31,7 +36,6 @@ public class IndividuumManager {
 		return (Math.random() );
 	}
 
-	//TODO fehler
 	public Vector<Individuum> getSelects() {
 		indsRang.clear();
 		int placeCount = 0;
@@ -40,27 +44,34 @@ public class IndividuumManager {
 		for (int i = 0; i < inds.length; i++) {
 			if (checkIndividuumNebenbedingung(i)) {
 
-				Individuum ndi = inds[i];
 				// Vergleichen und sortiertes einfügen
 				while (placeCount < indsRang.size() && inds[i].getF() > indsRang.get(placeCount).getF()) {
 					placeCount++;
 				}
-				
 
 				indsRang.add(placeCount, inds[i]);
-System.out.println(indsRang);
-System.out.println();
+				placeCount=0;
 			}
 		}
 
 		return indsRang;
 	}
+	
+	public void a(){
+		while(indsRang.size()<30){
+			
+		}
+	}
 
 	public void printSelects() {
 		getSelects();
 		int counter = 1;
+		
+		System.out.println("-------------------------------------");
+		System.out.println("Selektion Rang");
+		
 		for (Individuum ind : indsRang) {
-			System.out.println(counter + ". g:" + ind.getG()+", f: "+ind.getF());
+			System.out.println(counter + ". g:" + ind.getG()+", f: "+ind.getF()+" (id="+ind.getId()+")");
 			counter++;
 		}
 	}
