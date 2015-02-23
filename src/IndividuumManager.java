@@ -8,7 +8,7 @@ public class IndividuumManager {
 	private int bits;
 	private int min;
 	private int max;
-	
+
 	public IndividuumManager(int countOfInds, int bits) {
 		this.inds = new Individuum[countOfInds];
 		this.indsRang = new Vector<Individuum>();
@@ -18,60 +18,87 @@ public class IndividuumManager {
 	public void fillWithRandomNumbers(int min, int max) {
 		this.min = min;
 		this.max = max;
-		
+
 		for (int i = 0; i < inds.length; i++) {
 			inds[i] = new Individuum(i, getRandomInt(min, max), getRandomInt(min, max), bits);
 		}
 	}
 
-	public boolean checkIndividuumNebenbedingung(int id) {
+	public Individuum createIndividuum(int id) {
+		return new Individuum(id, getRandomInt(min, max), getRandomInt(min, max), bits);
+	}
+
+	public boolean passedCondition(int id) {
 		return inds[id].getG() >= 300;
+	}
+
+	public boolean passedCondition(Individuum ind) {
+		return ind.getG() >= 300;
 	}
 
 	public static int getRandomInt(int min, int max) {
 		return (int) (Math.random() * (max - min));
 	}
-	
+
 	public static double getRandomDouble() {
-		return (Math.random() );
+		return (Math.random());
 	}
 
 	public Vector<Individuum> getSelects() {
 		indsRang.clear();
-		int placeCount = 0;
-		
-		//TODO vlt sollten 30 sein, d.h. einige neu erstellen
+
 		for (int i = 0; i < inds.length; i++) {
-			if (checkIndividuumNebenbedingung(i)) {
-
-				// Vergleichen und sortiertes einfügen
-				while (placeCount < indsRang.size() && inds[i].getF() > indsRang.get(placeCount).getF()) {
-					placeCount++;
-				}
-
-				indsRang.add(placeCount, inds[i]);
-				placeCount=0;
+			if (passedCondition(i)) {
+				sortAndAdd(inds[i]);
 			}
 		}
 
+		if (indsRang.size() < 30) {
+			fillRang();
+		}
+		
+		//TODO Fragen ob man die übrigen Individuum durch neue erstetzen muss
+
 		return indsRang;
 	}
-	
-	public void a(){
-		while(indsRang.size()<30){
+
+	/**
+	 * Vergleichen und sortiertes einfügen
+	 * @param ind Individuum
+	 */
+	private void sortAndAdd(Individuum ind) {
+		int placeCount = 0;
+		
+		while (placeCount < indsRang.size() && ind.getF() > indsRang.get(placeCount).getF()) {
+			placeCount++;
+		}
+
+		indsRang.add(placeCount, ind);
+	}
+
+	private void fillRang() {
+		int counter = 31;
+
+		while (indsRang.size() < 30) {
+			Individuum id = createIndividuum(counter);
 			
+			if (passedCondition(id)) {
+				sortAndAdd(id);
+			}
+			
+			counter++;
 		}
 	}
 
 	public void printSelects() {
 		getSelects();
 		int counter = 1;
-		
+
 		System.out.println("-------------------------------------");
 		System.out.println("Selektion Rang");
-		
+
 		for (Individuum ind : indsRang) {
-			System.out.println(counter + ". g:" + ind.getG()+", f: "+ind.getF()+" (id="+ind.getId()+")");
+			System.out.println(counter + ". g:" + ind.getG() + ", f: " + ind.getF() + " (id=" + ind.getId() + ")");
 			counter++;
 		}
 	}
@@ -87,10 +114,10 @@ public class IndividuumManager {
 
 	}
 
-	public void mutateInds(double pm){
+	public void mutateInds(double pm) {
 		System.out.println("-------------------------------------------------------");
-		System.out.println("Mutation: pm = "+pm);
-		
+		System.out.println("Mutation: pm = " + pm);
+
 		for (int i = 0; i < inds.length; i++) {
 			mutation(pm, inds[i].getD());
 			mutation(pm, inds[i].getH());
@@ -99,48 +126,49 @@ public class IndividuumManager {
 		System.out.println("end mutation");
 		System.out.println("-------------------------------------------------------");
 	}
-	
-	public String mutation(double pm, String binaer){
+
+	public String mutation(double pm, String binaer) {
 		String oldString = binaer;
-		System.out.println("String "+binaer+":");
+		System.out.println("String " + binaer + ":");
 		double binPm;
-		
+
 		for (int i = 0; i < binaer.length(); i++) {
-			binPm  = getRandomDouble();
-			System.out.println("	"+i+": "+binPm+" < "+pm+"->"+(binPm<pm));
-			
-			if(binPm<pm){
-				System.out.println("		old: "+binaer);
+			binPm = getRandomDouble();
+			System.out.println("	" + i + ": " + binPm + " < " + pm + "->" + (binPm < pm));
+
+			if (binPm < pm) {
+				System.out.println("		old: " + binaer);
 				binaer = mutationString(binaer, i);
-				System.out.println("		new: "+binaer);
+				System.out.println("		new: " + binaer);
 			}
 		}
-		
-		System.out.println("Mutation ends for "+oldString+": "+binaer+"\n");
-		
+
+		System.out.println("Mutation ends for " + oldString + ": " + binaer + "\n");
+
 		return null;
 	}
-	
+
 	/**
 	 * Mutation: 1 to 0 and 0 to 1
-	 * @param binaer the strig which should be mutated
-	 * @param index the index of the char from the string
+	 * 
+	 * @param binaer
+	 *            the strig which should be mutated
+	 * @param index
+	 *            the index of the char from the string
 	 * @return the new string
 	 */
-	private String mutationString(String binaer, int index){
+	private String mutationString(String binaer, int index) {
 		char[] binaerChars = binaer.toCharArray();
-		
-		if(binaerChars[index]=='0'){
+
+		if (binaerChars[index] == '0') {
 			binaerChars[index] = '1';
-		}else if(binaerChars[index]=='1'){
+		} else if (binaerChars[index] == '1') {
 			binaerChars[index] = '0';
 		}
-		
+
 		return new String(binaerChars);
 	}
-	
-	
-	
+
 	public void singlePoint(int index) {
 		singlePoint(inds[index]);
 	}

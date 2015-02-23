@@ -5,6 +5,7 @@ public class Main {
 		ic.fillWithRandomNumbers(0, 31);
 		ic.print();
 		ic.singlePoint(2);
+		ic.printSelects();
 
 //		ic.mutateInds(IndividuumManager.getRandomDouble());
 		
