@@ -6,10 +6,7 @@ public class Main {
 		ic.print();
 		ic.singlePoint(2);
 		ic.printSelects();
-
-//		ic.mutateInds(IndividuumManager.getRandomDouble());
-		
-		ic.printSelects();
+		ic.mutateInds(IndividuumManager.getRandomDouble());
 	}
 
 }

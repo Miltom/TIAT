@@ -40,7 +40,6 @@ public class Individuum {
 		return bin;
 	}
 
-	// TODO anzahl bits festlegen
 	public int getDekodH() {
 		return Integer.parseInt(h, 2);
 	}
