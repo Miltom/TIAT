@@ -1,3 +1,4 @@
+package tiat;
 public class Individuum {
 
 	private String h;
@@ -7,14 +8,30 @@ public class Individuum {
 	private double f;
 	private double g;
 	private int id;
+	private int bits;
 
 	public Individuum(int id, int h, int d, int bits) {
-		// TODO reel?
 		this.id = id;
 		this.hReel = h;
 		this.dReel = d;
 		this.h = checkZeros(Integer.toBinaryString(h), bits);
 		this.d = checkZeros(Integer.toBinaryString(d), bits);
+		this.f = fitnessFunction();
+		this.g = gAusrechnen();
+	}
+	
+	public void auswerten(String h, String d){
+		this.h = h;
+		this.d = d;
+		this.hReel = getDekodH();
+		this.dReel = getDekodD();
+		this.f = fitnessFunction();
+		this.g = gAusrechnen();
+	}
+	
+	public void auswerten(){
+		this.h = checkZeros(Integer.toBinaryString(hReel), bits);
+		this.d = checkZeros(Integer.toBinaryString(hReel), bits);
 		this.f = fitnessFunction();
 		this.g = gAusrechnen();
 	}
@@ -27,7 +44,6 @@ public class Individuum {
 		return ((Math.PI * (dReel ^ 2)) / 2 + (Math.PI * dReel * hReel));
 	}
 
-	// TODO nebendbedingung überprüfen ob verletzt
 	private double gAusrechnen() {
 		return (Math.PI * (dReel ^ 2) * hReel) / 4;
 	}
@@ -63,6 +79,14 @@ public class Individuum {
 	 */
 	public String getD() {
 		return d;
+	}
+	
+	public void setD(String d) {
+		this.d = d;
+	}
+	
+	public void setH(String h) {
+		this.h = h;
 	}
 
 	/**

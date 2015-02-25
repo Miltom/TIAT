@@ -1,26 +1,34 @@
+package tiat;
+
 import java.util.Random;
 import java.util.Vector;
 
 public class IndividuumManager {
 
-	private Individuum[] inds;
+	private Vector<Individuum> inds;
 	private Vector<Individuum> indsRang;
 	private int bits;
 	private int min;
 	private int max;
 
-	public IndividuumManager(int countOfInds, int bits) {
-		this.inds = new Individuum[countOfInds];
+	public IndividuumManager(int bits) {
+		this.inds = new Vector<>();
 		this.indsRang = new Vector<Individuum>();
 		this.bits = bits;
 	}
 
-	public void fillWithRandomNumbers(int min, int max) {
+	public void auswerten() {
+		for (int i = 0; i < inds.size(); i++) {
+			inds.get(i).auswerten();
+		}
+	}
+
+	public void fillWithRandomNumbers(int countOfInds, int min, int max) {
 		this.min = min;
 		this.max = max;
 
-		for (int i = 0; i < inds.length; i++) {
-			inds[i] = new Individuum(i, getRandomInt(min, max), getRandomInt(min, max), bits);
+		for (int i = 0; i < countOfInds; i++) {
+			inds.add(new Individuum(i, getRandomInt(min, max), getRandomInt(min, max), bits));
 		}
 	}
 
@@ -29,7 +37,7 @@ public class IndividuumManager {
 	}
 
 	public boolean passedCondition(int id) {
-		return inds[id].getG() >= 300;
+		return inds.get(id).getG() >= 300;
 	}
 
 	public boolean passedCondition(Individuum ind) {
@@ -47,28 +55,33 @@ public class IndividuumManager {
 	public Vector<Individuum> getSelects() {
 		indsRang.clear();
 
-		for (int i = 0; i < inds.length; i++) {
+		for (int i = 0; i < inds.size(); i++) {
 			if (passedCondition(i)) {
-				sortAndAdd(inds[i]);
+				sortAndAdd(inds.get(i));
 			}
 		}
 
 		if (indsRang.size() < 30) {
 			fillRang();
 		}
-		
-		//TODO Fragen ob man die übrigen Individuum durch neue erstetzen muss
 
+		// TODO Kuchen, prozentuel rechnen etc
 		return indsRang;
+	}
+
+	private void kuchendiagramm() {
+
 	}
 
 	/**
 	 * Vergleichen und sortiertes einfügen
-	 * @param ind Individuum
+	 * 
+	 * @param ind
+	 *            Individuum
 	 */
 	private void sortAndAdd(Individuum ind) {
 		int placeCount = 0;
-		
+
 		while (placeCount < indsRang.size() && ind.getF() > indsRang.get(placeCount).getF()) {
 			placeCount++;
 		}
@@ -81,11 +94,11 @@ public class IndividuumManager {
 
 		while (indsRang.size() < 30) {
 			Individuum id = createIndividuum(counter);
-			
+
 			if (passedCondition(id)) {
 				sortAndAdd(id);
 			}
-			
+
 			counter++;
 		}
 	}
@@ -104,23 +117,39 @@ public class IndividuumManager {
 	}
 
 	public void print() {
-		for (int i = 0; i < inds.length; i++) {
-			System.out.println(inds[i].toString());
-			System.out.println("d+h->" + inds[i].getBinDAndH());
-			System.out.println("Deko. d: " + inds[i].getDekodD());
-			System.out.println("Deko. h: " + inds[i].getDekodH());
+		for (int i = 0; i < inds.size(); i++) {
+			System.out.println(inds.get(i).toString());
+			System.out.println("d+h->" + inds.get(i).getBinDAndH());
+			System.out.println("Deko. d: " + inds.get(i).getDekodD());
+			System.out.println("Deko. h: " + inds.get(i).getDekodH());
 			System.out.println("\n");
 		}
 
 	}
 
-	public void mutateInds(double pm) {
+	public void mutateInds(Vector<Individuum> vecInds, double pm) {
 		System.out.println("-------------------------------------------------------");
 		System.out.println("Mutation: pm = " + pm);
 
-		for (int i = 0; i < inds.length; i++) {
-			mutation(pm, inds[i].getD());
-			mutation(pm, inds[i].getH());
+		for (int i = 0; i < vecInds.size(); i++) {
+			mutation(pm, vecInds.get(i).getD());
+			mutation(pm, vecInds.get(i).getH());
+		}
+
+		System.out.println("end mutation");
+		System.out.println("-------------------------------------------------------");
+	}
+
+	public void mutateInds(double pm) {
+		System.out.println("-------------------------------------------------------");
+		System.out.println("Mutation: pm = " + pm);
+		String first = "", second = "";
+		
+		for (int i = 0; i < inds.size(); i++) {
+			first = mutation(pm, inds.get(i).getD());
+			second = mutation(pm, inds.get(i).getH());
+			// TODO evlt eleganter
+			inds.get(i).auswerten(first, second);
 		}
 
 		System.out.println("end mutation");
@@ -169,8 +198,14 @@ public class IndividuumManager {
 		return new String(binaerChars);
 	}
 
+	public void singlePoint(Vector<Individuum> vecInds) {
+		for (Individuum individuum : vecInds) {
+			singlePoint(individuum);
+		}
+	}
+
 	public void singlePoint(int index) {
-		singlePoint(inds[index]);
+		singlePoint(inds.get(index));
 	}
 
 	public void singlePoint(Individuum ind) {
@@ -179,6 +214,9 @@ public class IndividuumManager {
 
 		String first = ind.getD().substring(0, singlePoint) + ind.getH().substring(singlePoint);
 		String second = ind.getH().substring(0, singlePoint) + ind.getD().substring(singlePoint);
+
+		// TODO evlt elegant lösen
+		ind.auswerten(first, second);
 
 		System.out.println("----------------------");
 		System.out.println("Singlepoint: " + singlePoint);
@@ -193,6 +231,28 @@ public class IndividuumManager {
 		System.out.println(first);
 		System.out.println(second);
 		System.out.println("----------------------");
+	}
+
+	public Individuum getBestIndividuum() {
+		//TODO nach der verbesserung von selektion rang: hier getlast anstatt 0
+		return indsRang.get(0);
+	}
+
+	public Vector<Individuum> removeRandomInds(Vector<Individuum> indsParam, int anzahl) {
+		int counter = 0;
+		Vector<Individuum> indsRandom = new Vector<Individuum>();
+		Individuum ind = null;
+
+		while (counter < anzahl) {
+			ind = indsParam.get(getRandomInt(1, indsParam.size()));
+
+			if (!indsRandom.contains(ind)) {
+				indsParam.remove(ind);
+				indsRandom.add(ind);
+			}
+		}
+
+		return indsRandom;
 	}
 
 }
