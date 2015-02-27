@@ -1,5 +1,6 @@
 package tiat;
-public class Individuum {
+
+public class Individuum implements Comparable<Individuum>, Cloneable{
 
 	private String h;
 	private String d;
@@ -9,6 +10,9 @@ public class Individuum {
 	private double g;
 	private int id;
 	private int bits;
+	private double prozentualVon;
+	private double prozentualBis;
+	private double gewicht;
 
 	public Individuum(int id, int h, int d, int bits) {
 		this.id = id;
@@ -18,9 +22,12 @@ public class Individuum {
 		this.d = checkZeros(Integer.toBinaryString(d), bits);
 		this.f = fitnessFunction();
 		this.g = gAusrechnen();
+		this.prozentualBis = 0;
+		this.prozentualVon = 0;
+		this.gewicht = 0;
 	}
-	
-	public void auswerten(String h, String d){
+
+	public void auswerten(String h, String d) {
 		this.h = h;
 		this.d = d;
 		this.hReel = getDekodH();
@@ -28,10 +35,10 @@ public class Individuum {
 		this.f = fitnessFunction();
 		this.g = gAusrechnen();
 	}
-	
-	public void auswerten(){
+
+	public void auswerten() {
 		this.h = checkZeros(Integer.toBinaryString(hReel), bits);
-		this.d = checkZeros(Integer.toBinaryString(hReel), bits);
+		this.d = checkZeros(Integer.toBinaryString(dReel), bits);
 		this.f = fitnessFunction();
 		this.g = gAusrechnen();
 	}
@@ -57,6 +64,7 @@ public class Individuum {
 	}
 
 	public int getDekodH() {
+		System.out.println("h: "+h);
 		return Integer.parseInt(h, 2);
 	}
 
@@ -80,11 +88,11 @@ public class Individuum {
 	public String getD() {
 		return d;
 	}
-	
+
 	public void setD(String d) {
 		this.d = d;
 	}
-	
+
 	public void setH(String h) {
 		this.h = h;
 	}
@@ -102,9 +110,43 @@ public class Individuum {
 		return f;
 	}
 
+	public void setProzentualBis(double prozentualBis) {
+		this.prozentualBis = prozentualBis;
+	}
+
+	public void setProzentualVon(double prozentualVon) {
+		this.prozentualVon = prozentualVon;
+	}
+
+	public double getProzentualVon() {
+		return prozentualVon;
+	}
+
+	public double getProzentualBis() {
+		return prozentualBis;
+	}
+
+	public double getGewicht() {
+		return gewicht;
+	}
+
+	public void setGewicht(double gewicht) {
+		this.gewicht = gewicht;
+	}
+	
 	@Override
 	public String toString() {
 		return id + ". Individuum:\nh=" + h + " (" + hReel + ")\n" + "d=" + d + " (" + dReel + ")\n" + "f=" + f + "\ng=" + g;
+	}
+
+	@Override
+	public int compareTo(Individuum o) {
+			return ((Integer)getId()).compareTo(((Integer)o.getId()));
+	}
+	//Defined clone method in Department class.
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+	    return super.clone();
 	}
 
 }

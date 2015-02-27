@@ -23,11 +23,11 @@ public class GeneAlg {
 		IndividuumManager ic = new IndividuumManager(5);
 		ic.fillWithRandomNumbers(30, 0, 31);
 		ic.auswerten();
-		Vector<Individuum> rang = null;
+		Vector<Individuum> rang = ic.getInds();
 		Vector<Individuum> forRekombine= new Vector<>();;
 		
 		for (int i = 0; i < 100; i++) {
-			rang = ic.getSelects();
+			rang = ic.getSelects(rang);
 			
 			forRekombine = ic.removeRandomInds(rang, 10);
 			ic.singlePoint(forRekombine);
@@ -45,13 +45,22 @@ public class GeneAlg {
 		bestIndividuum.clear();
 		ic.fillWithRandomNumbers(30, 0, 31);
 		ic.auswerten();
-		Vector<Individuum> rang = null;
+		Vector<Individuum> rang = ic.getInds();
 
 		for (int i = 0; i < 100; i++) {
-			rang = ic.getSelects();
-			ic.mutateInds(rang, pm);
+			rang = ic.getSelects(rang);	if(ic.getBestIndividuum()==null){
+				ic.fillWithRandomNumbers(30, 0, 31);
+				//TODO falsch
+				rang = ic.getInds();
+				continue;
+			}
+			rang = ic.mutateIndsTest(rang, pm);
 //			ic.auswerten();
+		
 			bestIndividuum.add(ic.getBestIndividuum());
+			System.out.println(ic.getBestIndividuum());
+			System.out.println(i+"-"+rang.size());
+			ic.setRangs(rang);
 		}
 
 		addToDataset(bestIndividuum, pm);

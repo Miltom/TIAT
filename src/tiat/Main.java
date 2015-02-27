@@ -5,16 +5,16 @@ public class Main {
 //		IndividuumManager ic = new IndividuumManager( 5);
 //		ic.fillWithRandomNumbers(30, 0, 31);
 //		ic.print();
-//		ic.singlePoint(2);
+////		ic.singlePoint(2);
 //		ic.printSelects();
 //		ic.mutateInds(IndividuumManager.getRandomDouble());
 		
 		GeneAlg alg = new GeneAlg();
 		alg.doWork(0.1);
 		alg.doWork(0.01);
-		alg.doWork(1);
-//		alg.doWork(0.02);
-//		alg.doWork(0.2);
+		alg.doWork(0.005);
+		alg.doWork(0.02);
+		alg.doWork(0.2);
 		alg.showOnDiagramm();
 	}
 	
