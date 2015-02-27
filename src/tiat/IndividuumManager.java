@@ -1,5 +1,6 @@
 package tiat;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
@@ -58,21 +59,20 @@ public class IndividuumManager {
 
 	public Vector<Individuum> getSelects(Vector<Individuum> vecInds) {
 		indsRang.clear();
-
 		for (int i = 0; i < vecInds.size(); i++) {
 			if (passedCondition(vecInds.get(i))) {
-				sortAndAdd(vecInds.get(i));
+				indsRang.add(vecInds.get(i));
 			}
 		}
-
-
+		
 		if(indsRang.size()==0){
 			return null;
 		}
-		// TODO Kuchen, prozentuel rechnen etc
 
+		nachFSortieren(indsRang);
 		kuchendiagramm();
-		return indsRang;
+		
+		return (Vector<Individuum>) indsRang.clone();
 	}
 
 	private int kleinerGaus(int zahl) {
@@ -89,6 +89,7 @@ public class IndividuumManager {
 			index++;
 		}
 
+		// Nach der ID sortieren
 		Collections.sort(indsRang);
 
 		double lastPos = 0;
@@ -102,12 +103,32 @@ public class IndividuumManager {
 		}
 
 		Individuum ind = null;
-		while (indsRang.size() < countOfInds) {
+		Vector<Individuum> temp = new Vector<>();
+		int currentCount = indsRang.size();
+		
+		while (currentCount < countOfInds) {
 			ind = playAndREturn();
 			if (passedCondition(ind)) {
-				sortAndAdd(ind);
+				temp.add(ind);
+				currentCount++;
 			}
 		}
+		
+		indsRang.addAll(temp);
+		nachFSortieren(indsRang);
+	}
+	
+	private Vector<Individuum> nachFSortieren(Vector<Individuum> vec){
+
+		 Collections.sort(vec, new Comparator<Individuum>() {
+
+			@Override
+			public int compare(Individuum o1, Individuum o2) {
+				return ((Double)o2.getF()).compareTo((Double)o1.getF());
+			}
+		});
+		 
+		return vec;
 	}
 
 	public Individuum playAndREturn() {
@@ -116,12 +137,14 @@ public class IndividuumManager {
 
 		for (Individuum ind : indsRang) {
 			if (ind.getProzentualBis() >= p) {
+				
 				try {
 					return (Individuum) ind.clone();
 				} catch (CloneNotSupportedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 			}
 		}
 
@@ -129,23 +152,8 @@ public class IndividuumManager {
 
 	}
 
-	/**
-	 * Vergleichen und sortiertes einfügen
-	 * 
-	 * @param ind
-	 *            Individuum
-	 */
-	private void sortAndAdd(Individuum ind) {
-		int placeCount = indsRang.size();
 
-		while (placeCount > 0 && ind.getF() > indsRang.get(placeCount - 1).getF()) {
-			placeCount--;
-		}
-
-		indsRang.add(placeCount, ind);
-	}
-
-	public void printSelects(Vector<Individuum> vecInds) {
+	public Vector<Individuum> printSelects(Vector<Individuum>vecInds) {
 		getSelects(vecInds);
 		int counter = 1;
 
@@ -156,6 +164,7 @@ public class IndividuumManager {
 			System.out.println(counter + ". g:" + ind.getG() + ", f: " + ind.getF() + " (id=" + ind.getId() + ")");
 			counter++;
 		}
+		return indsRang;
 	}
 
 	public void print() {
@@ -183,24 +192,20 @@ public class IndividuumManager {
 	}
 	
 	
-	public Vector<Individuum> mutateIndsTest(Vector<Individuum> vecInds,double pm) {
+	public Vector<Individuum> mutateIndsTest(Vector<Individuum> vecInds, double pm) {
 		System.out.println("-------------------------------------------------------");
 		System.out.println("Mutation: pm = " + pm);
 		String first = "", second = "";
 
 		for (int i = 0; i < vecInds.size(); i++) {
-			//TODO ist null
 			first = mutation(pm, vecInds.get(i).getD());
 			second = mutation(pm, vecInds.get(i).getH());
-			// TODO evlt eleganter
-			System.out.println("vor: "+vecInds.get(i));
 			vecInds.get(i).auswerten(first, second);
-			System.out.println("danach: "+vecInds.get(i));
 		}
 
 		System.out.println("end mutation");
 		System.out.println("-------------------------------------------------------");
-		return vecInds;
+		return (Vector<Individuum>) vecInds.clone();
 	}
 
 	public void mutateInds(double pm) {
@@ -319,6 +324,7 @@ public class IndividuumManager {
 			if (!indsRandom.contains(ind)) {
 				indsParam.remove(ind);
 				indsRandom.add(ind);
+				counter++;
 			}
 		}
 
