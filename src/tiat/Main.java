@@ -10,14 +10,23 @@ public class Main {
 //		ic.printSelects();
 //		ic.mutateInds(IndividuumManager.getRandomDouble());
 		
+		//TODO sollte anderst aussehen
 		GeneAlg alg = new GeneAlg();
-		alg.doWorkWithRekombination(0.01);
-//		alg.doWork(0.1);
-//		alg.doWork(0.01);
-//		alg.doWork(0.005);
-//		alg.doWork(0.02);
-//		alg.doWork(0.2);
+		alg.doWork(0.1);
+		alg.doWork(0.005);
+		alg.doWork(0.02);
+		alg.doWork(0.2);
 		alg.showOnDiagramm();
+		
+
+//		alg.doWorkWithRekombination(0.01);
+//		alg.doWorkWithRekombination(0.1);
+//		alg.doWorkWithRekombination(0.005);
+//		alg.doWorkWithRekombination(0.02);
+//		alg.doWorkWithRekombination(0.2);
+//		alg.showOnDiagramm();
+		
+		
 	}
 	
 	

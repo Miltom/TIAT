@@ -13,6 +13,7 @@ public class Individuum implements Comparable<Individuum>, Cloneable{
 	private double prozentualVon;
 	private double prozentualBis;
 	private double gewicht;
+	private boolean newCreated;
 
 	public Individuum(int id, int h, int d, int bits) {
 		this.id = id;
@@ -149,4 +150,12 @@ public class Individuum implements Comparable<Individuum>, Cloneable{
 	    return super.clone();
 	}
 
+	public void setNew(boolean newCreated) {
+		this.newCreated = newCreated;
+	}
+
+	
+	public boolean isNewCreated() {
+		return newCreated;
+	}
 }
