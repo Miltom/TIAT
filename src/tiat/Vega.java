@@ -27,14 +27,21 @@ public class Vega {
 		this.ic = new IndividuumManager(5);
 		this.inds = ic.fillWithRandomNumbers(anzahlInds, 0, 31);
 		this.bestIndividuum = new Vector<>();
-		// ic.auswerten();
+		ic.auswerten(inds);
 		
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Vector<Vector<Individuum>> block = fillBlock(anzahlBlöcke, anzahlInds);
 			inds = doFunktion(block, anzahlBlöcke, anzahlInds);
+			// TODO überprüfen ob es richtig sortiert
+			inds= sort(inds);
+			
+			try {
+				bestIndividuum.add((Individuum) inds.get(0).clone());
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
 		}
 		
-		// TODO add best ind.
 		showOnDiagramm(bestIndividuum);
 	}
 
@@ -94,6 +101,20 @@ public class Vega {
 		nachGSortieren(indsParam);
 		return kuchenDiagramm(indsParam, anzahlInds);
 	}
+	
+	
+	public Vector<Individuum> sort(Vector<Individuum> indsParam) {
+		Collections.sort(indsParam, new Comparator<Individuum>() {
+
+			@Override
+			public int compare(Individuum o1, Individuum o2) {
+				return ((Double) o2.getF()).compareTo((Double) o1.getF())+((Double) o1.getG()).compareTo((Double) o2.getG());
+			}
+		});
+
+		return indsParam;
+	}
+	
 	
 	
 	public void addToDataset(Vector<Individuum> inds, double pm) {
