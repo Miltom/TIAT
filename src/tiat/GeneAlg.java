@@ -19,6 +19,31 @@ public class GeneAlg {
 		this.dataset = new XYSeriesCollection();
 	}
 
+	public void doWorkWithRekombination(double pm) {
+		IndividuumManager ic = new IndividuumManager(5);
+		bestIndividuum.clear();
+		Vector<Individuum> forRekombine = new Vector<>();
+		Vector<Individuum> rang = ic.fillWithRandomNumbers(30, 0, 31);
+		rang = ic.auswerten(rang);
+
+		for (int i = 0; i < 30; i++) {
+			// Rang-basierte Selektion
+			rang = (Vector<Individuum>) ic.getSelects(rang, 30).clone();
+			
+			// Rekombination
+			forRekombine = (Vector<Individuum>) ic.removeRandomInds(rang, 10).clone();
+			ic.singlePoint(forRekombine);
+			rang.addAll(forRekombine);
+			// Mutation und Auswertung, sollte false sein
+			rang = (Vector<Individuum>) ic.mutateIndsTestCond(rang, pm).clone();
+
+			// Speicherung des besten Individuum
+			bestIndividuum.add(ic.getBestIndividuum(rang));
+		}
+
+		addToDataset(bestIndividuum, pm);
+	}
+
 	// public void doWorkWithRekombination(double pm) {
 	// IndividuumManager ic = new IndividuumManager(5);
 	// bestIndividuum.clear();
@@ -60,9 +85,8 @@ public class GeneAlg {
 			rang = (Vector<Individuum>) ic.getSelects(rang, 30).clone();
 
 			// Mutation und Auswertung
-			rang = (Vector<Individuum>) ic.mutateIndsTest(rang, pm, true).clone();
+			rang = (Vector<Individuum>) ic.mutateIndsTest(rang, pm).clone();
 
-			
 			// Speicherung des besten Individuum
 			bestIndividuum.add(ic.getBestIndividuum(rang));
 		}

@@ -34,6 +34,19 @@ public class IndividuumManager {
 		
 		return inds;
 	}
+	
+	
+	public Vector<Individuum> fillWithRandomNumbers(int countOfInds, int min, int max, int liveCounter) {
+		this.min = min;
+		this.max = max;
+		Vector<Individuum> inds = new Vector<>();
+
+		for (int i = 0; i < countOfInds; i++) {
+			inds.add(new Individuum(liveCounter, i, getRandomInt(min, max), getRandomInt(min, max), bits));
+		}
+		
+		return inds;
+	}
 
 	public Individuum createIndividuum(int id) {
 		return new Individuum(id, getRandomInt(min, max), getRandomInt(min, max), bits);
@@ -176,7 +189,15 @@ public class IndividuumManager {
 		System.out.println("-------------------------------------------------------");
 	}
 
-	public static Vector<Individuum> mutateIndsTest(Vector<Individuum> vecInds, double pm, boolean shouldPassedCond) {
+	public Vector<Individuum> isotropischeMutation(Vector<Individuum> vecInds, double pm){
+		return mutateIndsTest(vecInds, pm);
+	}
+
+	public Vector<Individuum> nichtIsotropischeMutation(Vector<Individuum> vecInds, double pm){
+		return mutateIndsTest(vecInds, pm);
+	}
+	
+	public static Vector<Individuum> mutateIndsTestCond(Vector<Individuum> vecInds, double pm) {
 		System.out.println("-------------------------------------------------------");
 		System.out.println("Mutation: pm = " + pm);
 		String first = "", second = "";
@@ -187,7 +208,25 @@ public class IndividuumManager {
 				first = mutation(pm, vecInds.get(i).getD());
 				second = mutation(pm, vecInds.get(i).getH());
 				vecInds.get(i).auswerten(first, second);
-			} while (shouldPassedCond&&vecInds.get(i).getG() < 300);
+			} while (vecInds.get(i).getG() < 300);
+		}
+
+		System.out.println("end mutation");
+		System.out.println("-------------------------------------------------------");
+		return (Vector<Individuum>) vecInds.clone();
+	}
+	
+	
+	public static Vector<Individuum> mutateIndsTest(Vector<Individuum> vecInds, double pm) {
+		System.out.println("-------------------------------------------------------");
+		System.out.println("Mutation: pm = " + pm);
+		String first = "", second = "";
+
+		for (int i = 0; i < vecInds.size(); i++) {
+
+				first = mutation(pm, vecInds.get(i).getD());
+				second = mutation(pm, vecInds.get(i).getH());
+				vecInds.get(i).auswerten(first, second);
 		}
 
 		System.out.println("end mutation");
@@ -279,6 +318,29 @@ public class IndividuumManager {
 		return indsParam.get(indsParam.size() - 1);
 	}
 
+	public Vector<Individuum> randomInds(Vector<Individuum> indsParam, int anzahl) {
+		int counter = 0;
+		Vector<Individuum> indsRandom = new Vector<Individuum>();
+		Individuum ind = null;
+
+		while (counter < anzahl) {
+			try {
+				System.out.println(indsParam.size());
+				ind = (Individuum) indsParam.get(getRandomInt(0, indsParam.size())).clone();
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			if (!indsRandom.contains(ind)) {
+				indsRandom.add(ind);
+				counter++;
+			}
+		}
+
+		return indsRandom;
+	}
+	
 	public Vector<Individuum> removeRandomInds(Vector<Individuum> indsParam, int anzahl) {
 		int counter = 0;
 		Vector<Individuum> indsRandom = new Vector<Individuum>();
@@ -297,4 +359,17 @@ public class IndividuumManager {
 		return indsRandom;
 	}
 
+	public Vector<Individuum> reducingLives(Vector<Individuum> indsParam, int lives){
+		for (int i = 0; i < indsParam.size(); i++) {
+			indsParam.get(i).reducingLives();
+			
+			if(indsParam.get(i).getLiveCounter()<1){
+				indsParam.remove(i);
+				indsParam.addAll(fillWithRandomNumbers(1, 0, 31));
+			}
+		}
+		
+		return indsParam;
+	}
+	
 }

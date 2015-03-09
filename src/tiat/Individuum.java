@@ -14,6 +14,7 @@ public class Individuum implements Comparable<Individuum>, Cloneable{
 	private double prozentualBis;
 	private double gewicht;
 	private boolean newCreated;
+	private int liveCounter;
 
 	public Individuum(int id, int h, int d, int bits) {
 		this.id = id;
@@ -28,6 +29,12 @@ public class Individuum implements Comparable<Individuum>, Cloneable{
 		this.gewicht = 0;
 	}
 
+
+	public Individuum(int livesCounter, int id, int h, int d, int bits) {
+		this(id, h, d, bits);
+		this.liveCounter=livesCounter;
+	}
+	
 	public void auswerten(String h, String d) {
 		this.h = h;
 		this.d = d;
@@ -146,9 +153,22 @@ public class Individuum implements Comparable<Individuum>, Cloneable{
 	}
 	//Defined clone method in Department class.
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
+	public Object clone() throws CloneNotSupportedException {
+		Object obj = super.clone();
 	    return super.clone();
 	}
+	
+	public Individuum clone2(int lives) {
+		Individuum obj = null;
+		try {
+			obj = (Individuum) super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		obj.setLiveCounter(lives);
+	    return obj;
+	}
+
 
 	public void setNew(boolean newCreated) {
 		this.newCreated = newCreated;
@@ -157,5 +177,24 @@ public class Individuum implements Comparable<Individuum>, Cloneable{
 	
 	public boolean isNewCreated() {
 		return newCreated;
+	}
+	
+	public int getLiveCounter() {
+		return liveCounter;
+	}
+	
+	public void setLiveCounter(int liveCounter) {
+		this.liveCounter = liveCounter;
+	}
+	
+	public void reducingLives(){
+		this.liveCounter--;
+	}
+	
+	public int getHReel() {
+		return hReel;
+	}
+	public int getDReel() {
+		return dReel;
 	}
 }

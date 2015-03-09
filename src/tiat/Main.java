@@ -12,11 +12,11 @@ public class Main {
 		
 		//TODO sollte anderst aussehen
 		GeneAlg alg = new GeneAlg();
-		alg.doWork(0.1);
-		alg.doWork(0.005);
-		alg.doWork(0.02);
-		alg.doWork(0.2);
-		alg.showOnDiagramm();
+//		alg.doWork(0.1);
+//		alg.doWork(0.005);
+//		alg.doWork(0.02);
+//		alg.doWork(0.2);
+//		alg.showOnDiagramm();
 		
 
 //		alg.doWorkWithRekombination(0.01);
